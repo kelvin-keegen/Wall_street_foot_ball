@@ -21,8 +21,6 @@ public class MatchConfig {
 
     private final DBrepository dBrepository;
 
-    private final MongoTemplate mongoTemplate;
-
 
     private final Matchstats matchstats = new Matchstats();
     private final IndexPublisher indexPublisher = new IndexPublisher();
@@ -47,13 +45,13 @@ public class MatchConfig {
             //throw new IllegalStateException("There is a player");
             System.out.println("There is a player");
 
-            Stats_and_Index_Calculation(mongoTemplate);
+            Stats_and_Index_Calculation();
 
         } else {
 
             dBrepository.save(player);
 
-            Stats_and_Index_Calculation(mongoTemplate);
+            Stats_and_Index_Calculation();
 
         }
 
@@ -61,7 +59,7 @@ public class MatchConfig {
 
     }
 
-    public void Stats_and_Index_Calculation(MongoTemplate mongoTemplate) {
+    public void Stats_and_Index_Calculation() {
 
         double index;
 
@@ -75,7 +73,7 @@ public class MatchConfig {
         System.out.println("Getting Player from DB");
 
 
-        Player player = dBrepository.findPlayerByPlayerId("22")
+        Player player = dBrepository.findPlayerByPlayerId(playerId)
                 .orElseThrow(() -> new IllegalStateException("No Player found with that ID"));
 
 

@@ -7,7 +7,7 @@ public class IndexPublisher {
     public void publishIndex(Player player, double index) {
 
         System.out.println("Player: " + player);
-        System.out.println("Index is: " + index);
+        System.out.println("Index to be published is: " + index);
 
     }
 

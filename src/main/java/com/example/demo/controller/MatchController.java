@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Player;
-import com.example.demo.service.PlayerService;
+import com.example.demo.externalObjects.Matchstats;
+import com.example.demo.service.MatchService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,16 +10,17 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/player")
+@RequestMapping("/match")
 @AllArgsConstructor
-public class PlayerControler {
+public class MatchController {
 
-    private final PlayerService playerService;
+    private final MatchService matchService;
 
     @GetMapping(path = "/get")
-    public List<Player> GetAllPlayers() {
+    public List<Matchstats> GetDataofMatch() {
 
-        return playerService.GetData();
+        return matchService.GetDataofMatch();
     }
+
 
 }

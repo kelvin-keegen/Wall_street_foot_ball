@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Player {
 
     private String playerId;
-    private String playerPosistion;
+    private String playerPosition;
     private String playerTeam;
 
 }

@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Player;
+import com.example.demo.externalObjects.Matchstats;
 import com.example.demo.repository.DBrepository;
+import com.example.demo.repository.MatchRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,4 +20,5 @@ public class PlayerService {
 
         return dBrepository.findAll();
     }
+
 }

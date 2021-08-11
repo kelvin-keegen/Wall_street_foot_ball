@@ -2,34 +2,59 @@ package com.example.demo.config;
 
 
 import com.example.demo.entity.Player;
-import com.example.demo.IndexPublisher;
-import com.example.demo.Matchstats;
+import com.example.demo.externalObjects.Matchstats;
 import com.example.demo.repository.DBrepository;
+import com.example.demo.repository.MatchRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Configuration
 @AllArgsConstructor
-public class MatchConfig {
+public class MatchConfig implements IndexPublisher{
 
     private final DBrepository dBrepository;
-
-
-    private final Matchstats matchstats = new Matchstats();
-    private final IndexPublisher indexPublisher = new IndexPublisher();
+    private final MatchRepository matchRepository;
+    private final Matchstats matchstats;
 
 
     private final String playerId = "22";
+    private final String matchId = "match001";
 
     @Bean
-    public String SavingDemoPlayer() {
+    public void SavingDemoMatch() {
+
+       Map<String,Double> stats = new HashMap<>();
+
+        stats.put("nr_goals",5.0);
+        stats.put("nr_fouls",2.0);
+        stats.put("nr_assists",1.0);
+        stats.put("nr_own_goals",0.0);
+        stats.put("nr_goals_conceded",2.0);
+
+        Matchstats matchstats = new Matchstats(
+                playerId,
+                stats,
+                matchId
+        );
+
+        long matchSize = matchRepository.count();
+
+        // console messages added for debugging
+        if(matchSize > 0) {
+            System.out.println(matchstats);
+        }else {
+            matchRepository.save(matchstats);
+            System.out.println(matchstats);
+            System.out.println("saving...");
+        }
+    }
+
+    @Bean
+    public void SavingDemoPlayer() {
 
         Player player = new Player(
 
@@ -41,24 +66,15 @@ public class MatchConfig {
         long playersize = dBrepository.count();
 
         if(playersize > 0) {
-
-            //throw new IllegalStateException("There is a player");
-            System.out.println("There is a player");
-
-            Stats_and_Index_Calculation();
-
+            System.out.println(player);
         } else {
-
             dBrepository.save(player);
-
-            Stats_and_Index_Calculation();
-
+            System.out.println(player);
+            System.out.println("saving...");
         }
-
-        return "Player Saved";
-
     }
 
+    @Bean
     public void Stats_and_Index_Calculation() {
 
         double index;
@@ -70,15 +86,10 @@ public class MatchConfig {
         double nr_goals_conceded;
         Map<String,Double> receivedstats;
 
-        System.out.println("Getting Player from DB");
-
-
         Player player = dBrepository.findPlayerByPlayerId(playerId)
                 .orElseThrow(() -> new IllegalStateException("No Player found with that ID"));
 
-
-        // Simulates a controller receiving Match stats parameters
-        String matchId = "match001"; // Param
+        // Simulates a controller receiving Match stats
         Matchstats currentMatch = matchstats.retrieveStats(matchId,playerId);
 
         receivedstats = currentMatch.getStats();
@@ -94,20 +105,15 @@ public class MatchConfig {
         index = (nr_goals*3) + (nr_assists*1) + (nr_own_goals*(-3))
                 + (nr_fouls*(-0.2)) + (nr_goals_conceded*(-1));
 
-        //Debugging result
+        //Showing Debug result
 
         System.out.println(index);
 
         // Publish index
 
-        indexPublisher.publishIndex(player,index);
-
+        IndexPublisher.publishIndex(player,index);
 
         }
-
-
-
-
     }
 
 
